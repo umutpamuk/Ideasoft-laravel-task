@@ -17,11 +17,18 @@ class OrderController extends Controller
     {
         $orders = Order::with('items')->get();
 
-        foreach ($orders as $order) {
-            $response[] = new OrderDetailsResource($order);
-        }
+        if (COUNT($orders) > 0) {
+            foreach ($orders as $order) {
+                $response[] = new OrderDetailsResource($order);
+            }
 
-        return response()->json($response);
+            return response()->json($response);
+
+        } else {
+
+            return response()->json(['status' => 'error', 'message' => 'Not Fount'], 404);
+
+        }
 
 
     }
