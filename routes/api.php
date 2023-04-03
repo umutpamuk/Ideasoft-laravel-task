@@ -20,4 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/orders', [OrderController::class, 'index']);
+Route::post('/order/create', [OrderController::class, 'store']);
 Route::delete('/order/delete/{id}', [OrderController::class, 'destroy']);

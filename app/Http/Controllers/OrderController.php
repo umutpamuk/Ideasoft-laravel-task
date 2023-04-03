@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderCreateRequest;
 use App\Http\Resources\Order\OrderDetailsResource;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -36,9 +37,42 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrderCreateRequest $request)
     {
-        //
+        // Stok Kontrol
+        foreach ($request->cart as $cart) {
+            Product::productQuantityCheck($cart);
+        }
+
+        // Sipariş Oluştur
+        $total = 0;
+        $order = new Order();
+        $order->customer_id = $request->customer_id;
+        $order->total = $total;
+        $order->save();
+
+        foreach ($request->cart as $item) {
+            $product = Product::find($item['product_id']);
+            $total += $item['quantity'] * $product->price;
+
+            $product->stock -= $item['quantity'];
+            $product->save();
+
+            $orderItem = new OrderItem();
+            $orderItem->order_id    = $order->id;
+            $orderItem->product_id  = $item['product_id'];
+            $orderItem->quantity    = $item['quantity'];
+            $orderItem->unit_price  = $product->price;
+            $orderItem->total       = $item['quantity'] * $product->price;
+            $orderItem->save();
+
+        }
+
+        $order = Order::find($order->id);
+        $order->total = $total;
+        $order->save();
+
+        return response()->json(new OrderDetailsResource($order));
     }
 
     /**
