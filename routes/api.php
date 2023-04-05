@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\OrderController;
+use \App\Http\Controllers\DiscountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/orders', [OrderController::class, 'index']);
 Route::post('/order/create', [OrderController::class, 'store']);
 Route::delete('/order/delete/{id}', [OrderController::class, 'destroy']);
+
+Route::get('/apply/discount/{id}', [DiscountController::class, 'applyDiscount']);
