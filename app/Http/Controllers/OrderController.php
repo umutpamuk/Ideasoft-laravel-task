@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderCreateRequest;
 use App\Http\Resources\Order\OrderDetailsResource;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -65,12 +66,15 @@ class OrderController extends Controller
             $orderItem->unit_price  = $product->price;
             $orderItem->total       = $item['quantity'] * $product->price;
             $orderItem->save();
-
         }
 
         $order = Order::find($order->id);
         $order->total = $total;
         $order->save();
+
+        $customer = Customer::find($request->customer_id);
+        $customer->revenue += $total;
+        $customer->save();
 
         return response()->json(new OrderDetailsResource($order));
     }
