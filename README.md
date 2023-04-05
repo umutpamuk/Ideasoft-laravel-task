@@ -13,7 +13,7 @@
 Projeyi klonlayın
 
 ```bash
-  git@github.com:umutpamuk/Ideasoft-laravel-task.git
+  git clone git@github.com:umutpamuk/Ideasoft-laravel-task.git
 ```
 
 Proje dizinine gidin
