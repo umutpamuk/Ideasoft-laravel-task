@@ -11,7 +11,7 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller
+class OrderController extends BaseController
 {
 
     /**
@@ -26,12 +26,10 @@ class OrderController extends Controller
                 $response[] = new OrderDetailsResource($order);
             }
 
-            return response()->json($response);
+            return $this->JsonResponse($response);
 
         } else {
-
-            return response()->json(['status' => 'error', 'message' => 'Not Fount'], 404);
-
+            return $this->JsonResponse(null, 404);
         }
 
 
@@ -79,7 +77,7 @@ class OrderController extends Controller
         $customer->revenue += $total;
         $customer->save();
 
-        return response()->json(new OrderDetailsResource($order));
+        return $this->JsonResponse(new OrderDetailsResource($order));
     }
 
     /**
@@ -94,10 +92,12 @@ class OrderController extends Controller
 
            $order->delete();
 
-           return response()->json(['success' => true], 200);
+           return $this->JsonResponse(['success' => true]);
+
        } else {
 
-           return response()->json(['status' => 'error', 'message' => 'Not Fount'], 404);
+           return $this->JsonResponse(null, 404);
+
        }
 
     }

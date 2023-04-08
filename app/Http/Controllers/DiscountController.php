@@ -6,9 +6,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
-class DiscountController extends Controller
+class DiscountController extends BaseController
 {
     /**
      * @param $orderId
@@ -19,7 +18,7 @@ class DiscountController extends Controller
         $order = Order::where('id', $orderId)->first();
 
         if (empty($order)) {
-            return response()->json(['status'=>'error', 'message' => 'Order Id Not Found'], 404);
+            return $this->JsonResponse($order, 404);
         }
 
         $totalDiscount   = 0;
@@ -98,6 +97,6 @@ class DiscountController extends Controller
         $response['totalDiscount']   = number_format($totalDiscount, 2, '.', '');
         $response['discountedTotal'] = $discountedTotal;
 
-        return response()->json($response);
+        return $this->JsonResponse($response);
     }
 }
