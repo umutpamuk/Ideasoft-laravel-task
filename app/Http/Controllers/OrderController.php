@@ -8,14 +8,16 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index() : JsonResponse
     {
         $orders = Order::with('items')->get();
 
@@ -37,9 +39,9 @@ class OrderController extends Controller
 
     /**
      * @param OrderCreateRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function store(OrderCreateRequest $request)
+    public function store(OrderCreateRequest $request) : JsonResponse
     {
         // Stok Kontrol
         foreach ($request->cart as $cart) {
@@ -81,27 +83,10 @@ class OrderController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-
-    /**
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id) : JsonResponse
     {
        $order = Order::find($id);
 

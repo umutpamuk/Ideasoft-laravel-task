@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
     /**
      * @param $orderId
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function applyDiscount($orderId)
+    public function applyDiscount($orderId) : JsonResponse
     {
         $order = Order::where('id', $orderId)->first();
 
