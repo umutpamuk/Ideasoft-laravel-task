@@ -14,7 +14,7 @@ class DiscountController extends Controller
      * @param $orderId
      * @return JsonResponse
      */
-    public function applyDiscount($orderId) : JsonResponse
+    public function applyDiscount(int $orderId) : JsonResponse
     {
         $order = Order::where('id', $orderId)->first();
 

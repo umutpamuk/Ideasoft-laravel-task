@@ -86,7 +86,7 @@ class OrderController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function destroy($id) : JsonResponse
+    public function destroy(int $id) : JsonResponse
     {
        $order = Order::find($id);
 
