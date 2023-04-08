@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -36,7 +36,8 @@ class OrderController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param OrderCreateRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(OrderCreateRequest $request)
     {
@@ -95,8 +96,10 @@ class OrderController extends Controller
         //
     }
 
+
     /**
-     * Remove the specified resource from storage.
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
@@ -106,7 +109,7 @@ class OrderController extends Controller
 
            $order->delete();
 
-           return response()->json(['success' => true],200);
+           return response()->json(['success' => true], 200);
        } else {
 
            return response()->json(['status' => 'error', 'message' => 'Not Fount'], 404);

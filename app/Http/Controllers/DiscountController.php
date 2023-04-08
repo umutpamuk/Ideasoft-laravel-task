@@ -9,9 +9,13 @@ use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
-    public function applyDiscount($orderId) {
-
-        $order = Order::where('id',$orderId)->first();
+    /**
+     * @param $orderId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function applyDiscount($orderId)
+    {
+        $order = Order::where('id', $orderId)->first();
 
         if (empty($order)) {
             return response()->json(['status'=>'error', 'message' => 'Order Id Not Found'], 404);
@@ -24,8 +28,8 @@ class DiscountController extends Controller
         $response['orderId'] = $order->id;
 
         if ($order->total >= 1000) {
-            $discountAmount = number_format($order->total - (0.90 * $order->total),2,'.','');
-            $subtotal       = number_format($subtotal - $discountAmount,2,'.','');
+            $discountAmount = number_format($order->total - (0.90 * $order->total), 2, '.', '');
+            $subtotal       = number_format($subtotal - $discountAmount, 2, '.', '');
 
             $totalDiscount   += $discountAmount;
             $discountedTotal = $subtotal;
@@ -37,12 +41,17 @@ class DiscountController extends Controller
             ];
         }
 
-        $orderItems = OrderItem::where('order_id',$order->id)->get();
+        $orderItems = OrderItem::where('order_id', $order->id)->get();
         $categoryArray = [];
         foreach ($orderItems as $orderItem) {
             $product = Product::findOrFail($orderItem->product_id);
 
-            $categoryArray[$product->category_id]['count'] = ((isset($categoryArray[$product->category_id]['count'])) ? $categoryArray[$product->category_id]['count'] : 0) + $orderItem->quantity;
+            $categoryCount = 0;
+            if (isset($categoryArray[$product->category_id]['count'])) {
+                $categoryCount = $categoryArray[$product->category_id]['count'];
+            }
+
+            $categoryArray[$product->category_id]['count'] = $categoryCount + $orderItem->quantity;
             $categoryArray[$product->category_id]['productDetails'][] = [
                 'product_id'  => $product->id,
                 'category_id' => $product->category_id,
@@ -50,13 +59,13 @@ class DiscountController extends Controller
             ];
         }
 
-        if (isset($categoryArray[2]['count']) AND $categoryArray[2]['count'] >= 6) {
+        if (isset($categoryArray[2]['count']) && $categoryArray[2]['count'] >= 6) {
 
             $minPrice  = min(array_column($categoryArray[2]['productDetails'], 'price'));
             $freeItems = floor($categoryArray[2]['count'] / 6);
 
-            $discountAmount = number_format($freeItems * $minPrice,2,'.','');
-            $subtotal       = number_format($subtotal - $discountAmount,2,'.','');
+            $discountAmount = number_format($freeItems * $minPrice, 2, '.', '');
+            $subtotal       = number_format($subtotal - $discountAmount, 2, '.', '');
 
             $totalDiscount   += $discountAmount;
             $discountedTotal = $subtotal;
@@ -68,12 +77,12 @@ class DiscountController extends Controller
             ];
         }
 
-        if (isset($categoryArray[1]['count']) AND $categoryArray[1]['count'] >= 2) {
+        if (isset($categoryArray[1]['count']) && $categoryArray[1]['count'] >= 2) {
 
             $minPrice  = min(array_column($categoryArray[1]['productDetails'], 'price'));
 
-            $discountAmount = number_format(0.80 * $minPrice,2,'.','');
-            $subtotal       = number_format($subtotal - $discountAmount,2,'.','');
+            $discountAmount = number_format(0.80 * $minPrice, 2, '.', '');
+            $subtotal       = number_format($subtotal - $discountAmount, 2, '.', '');
 
             $totalDiscount   += $discountAmount;
             $discountedTotal = $subtotal;
@@ -85,7 +94,7 @@ class DiscountController extends Controller
             ];
         }
 
-        $response['totalDiscount']   = number_format($totalDiscount,2,'.','');
+        $response['totalDiscount']   = number_format($totalDiscount, 2, '.', '');
         $response['discountedTotal'] = $discountedTotal;
 
         return response()->json($response);
