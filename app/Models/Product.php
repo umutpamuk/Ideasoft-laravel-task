@@ -4,19 +4,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
-    protected $guarded = [];
+    use SoftDeletes;
 
-    public static function productQuantityCheck($cart)
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'name',
+        'category_id',
+        'price',
+        'stock',
+    ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
     {
-        $product = Product::find($cart['product_id']);
+        return $this->belongsTo(Category::class);
+    }
 
-        if (!$product || $product->stock < $cart['quantity']) {
-            throw new HttpResponseException(response()->json(['error' => 'Insufficient Stock'], 400));
-        }
+    /**
+     * @return bool
+     */
+    public function isStockAvailable(): bool
+    {
+        return $this->stock > 0;
     }
 }

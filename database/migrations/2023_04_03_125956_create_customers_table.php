@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('since');
             $table->decimal('revenue', 8, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
