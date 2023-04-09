@@ -2,30 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Repositories\DiscountRepository;
-use Illuminate\Http\JsonResponse;
+use App\Services\Discount\DiscountService;
 
 class DiscountController extends BaseController
 {
-    /**
-     * @var DiscountRepository
-     */
-    private DiscountRepository $discountRepository;
+    public function __construct(
+        public DiscountService $discountService
+    ) {}
 
-    /**
-     * @param DiscountRepository $discountRepository
-     */
-    public function __construct(DiscountRepository $discountRepository)
+    public function apply(int $orderId)
     {
-        $this->discountRepository = $discountRepository;
-    }
-
-    /**
-     * @param int $orderId
-     * @return JsonResponse
-     */
-    public function apply(int $orderId) : JsonResponse
-    {
-        return $this->discountRepository->apply($orderId);
+        return $this->discountService->apply($orderId);
     }
 }

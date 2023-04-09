@@ -1,28 +1,21 @@
 <?php
 
-namespace App\Services\Repositories;
+namespace App\Repositories\Discount;
 
 use App\Http\Controllers\BaseController;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Services\Interfaces\DiscountInterface;
-use Illuminate\Http\JsonResponse;
 
-class DiscountRepository extends BaseController implements DiscountInterface
+class DiscountRepository extends BaseController implements DiscountRepositoryInterface
 {
-    /**
-     * @param int $orderId
-     * @return JsonResponse
-     */
-    public function apply(int $orderId) : JsonResponse
+    public function apply(int $orderId)
     {
-        $order = Order::where('id', $orderId)->first();
+        $order = Order::with('items')->find($orderId);
 
         if (empty($order)) {
-            return $this->JsonResponse($order, 404);
+            return $this->JsonResponse(null, 404);
         }
-
         $totalDiscount   = 0;
         $discountedTotal = $order->total;
         $subtotal        = $discountedTotal;
@@ -99,7 +92,7 @@ class DiscountRepository extends BaseController implements DiscountInterface
         $response['totalDiscount']   = number_format($totalDiscount, 2, '.', '');
         $response['discountedTotal'] = $discountedTotal;
 
-        return $this->JsonResponse($response);
+        return $response;
     }
 
 }
