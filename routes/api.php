@@ -20,8 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/orders', [OrderController::class, 'index']);
-Route::post('/order/create', [OrderController::class, 'store']);
-Route::delete('/order/delete/{id}', [OrderController::class, 'destroy']);
+Route::prefix('orders')
+    ->group(function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::post('/', [OrderController::class, 'store']);
+        Route::delete('{id}', [OrderController::class, 'destroy']);
+    });
 
 Route::get('/apply/discount/{id}', [DiscountController::class, 'apply']);

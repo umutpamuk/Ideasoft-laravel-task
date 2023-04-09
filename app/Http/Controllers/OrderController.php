@@ -2,103 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderCreateRequest;
-use App\Http\Resources\Order\OrderDetailsResource;
-use App\Models\Customer;
+use App\Http\Requests\OrderStoreRequest;
+use App\Http\Resources\Order\OrderResource;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Services\Order\OrderService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends BaseController
 {
 
     /**
-     * @return JsonResponse
+     * @param OrderService $orderService
      */
-    public function index() : JsonResponse
-    {
-        $orders = Order::with('items')->get();
-
-        if (COUNT($orders) > 0) {
-            foreach ($orders as $order) {
-                $response[] = new OrderDetailsResource($order);
-            }
-
-            return $this->JsonResponse($response);
-
-        } else {
-            return $this->JsonResponse(null, 404);
-        }
-
-
-    }
+    public function __construct(
+        public OrderService $orderService
+    )
+    {}
 
     /**
-     * @param OrderCreateRequest $request
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function store(OrderCreateRequest $request) : JsonResponse
+    public function index(): AnonymousResourceCollection
     {
-        // Stok Kontrol
-        foreach ($request->cart as $cart) {
-            Product::productQuantityCheck($cart);
-        }
-
-        // Sipariş Oluştur
-        $total = 0;
-        $order = new Order();
-        $order->customer_id = $request->customer_id;
-        $order->total = $total;
-        $order->save();
-
-        foreach ($request->cart as $item) {
-            $product = Product::find($item['product_id']);
-            $total += $item['quantity'] * $product->price;
-
-            $product->stock -= $item['quantity'];
-            $product->save();
-
-            $orderItem = new OrderItem();
-            $orderItem->order_id    = $order->id;
-            $orderItem->product_id  = $item['product_id'];
-            $orderItem->quantity    = $item['quantity'];
-            $orderItem->unit_price  = $product->price;
-            $orderItem->total       = $item['quantity'] * $product->price;
-            $orderItem->save();
-        }
-
-        $order = Order::find($order->id);
-        $order->total = $total;
-        $order->save();
-
-        $customer = Customer::find($request->customer_id);
-        $customer->revenue += $total;
-        $customer->save();
-
-        return $this->JsonResponse(new OrderDetailsResource($order));
+       return $this->orderService->all();
     }
 
+
     /**
-     * @param $id
-     * @return JsonResponse
+     * @param OrderStoreRequest $request
+     * @return OrderResource
      */
-    public function destroy(int $id) : JsonResponse
+    public function store(OrderStoreRequest $request): OrderResource
     {
-       $order = Order::find($id);
+        return $this->orderService->store($request);
+    }
 
-       if ($order) {
 
-           $order->delete();
-
-           return $this->JsonResponse(['success' => true]);
-
-       } else {
-
-           return $this->JsonResponse(null, 404);
-
-       }
-
+    /**
+     * @param int $id
+     * @return OrderResource
+     */
+    public function destroy(int $id) : OrderResource
+    {
+        return $this->orderService->destroy($id);
     }
 }

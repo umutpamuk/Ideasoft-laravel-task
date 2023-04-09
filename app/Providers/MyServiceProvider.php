@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
-use App\Services\Interfaces\DiscountInterface;
-use App\Services\Repositories\DiscountRepository;
+
+use App\Repositories\Order\OrderRepository;
+use App\Repositories\Order\OrderRepositoryInterface;
+use App\Repositories\Order\OrderService;
+use App\Repositories\Order\OrderServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class MyServiceProvider extends ServiceProvider
@@ -13,7 +16,9 @@ class MyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        app()->bind(DiscountInterface::class, DiscountRepository::class);
+       app()->bind(OrderServiceInterface::class, OrderService::class);
+       app()->bind(OrderRepositoryInterface::class, OrderRepository::class);
+
     }
 
     /**
