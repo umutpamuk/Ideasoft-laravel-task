@@ -3,15 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Services\Discount\DiscountService;
+use Illuminate\Http\JsonResponse;
 
 class DiscountController extends BaseController
 {
+    /**
+     * @param DiscountService $discountService
+     */
     public function __construct(
         public DiscountService $discountService
     ) {}
 
-    public function apply(int $orderId)
+
+    /**
+     * @param int $orderId
+     * @return JsonResponse
+     */
+    public function apply(int $orderId) : JsonResponse
     {
-        return $this->discountService->apply($orderId);
+        $applyDiscount = $this->discountService->apply($orderId);
+
+        if ($applyDiscount) {
+            return $this->jsonResponse($applyDiscount);
+        } else {
+            return $this->jsonResponse(null,404);
+        }
     }
 }

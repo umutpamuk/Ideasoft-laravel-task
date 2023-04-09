@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class BaseController extends Controller
 {
+    /**
+     * @param $data
+     * @param $statusCode
+     * @return JsonResponse
+     */
     protected function jsonResponse($data = null, $statusCode = 200) : JsonResponse
     {
         return match ($statusCode) {

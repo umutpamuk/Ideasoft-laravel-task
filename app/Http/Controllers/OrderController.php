@@ -4,12 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Resources\Order\OrderResource;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
 
 class OrderController extends BaseController
 {

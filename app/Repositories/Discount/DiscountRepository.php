@@ -2,19 +2,22 @@
 
 namespace App\Repositories\Discount;
 
-use App\Http\Controllers\BaseController;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 
-class DiscountRepository extends BaseController implements DiscountRepositoryInterface
+class DiscountRepository implements DiscountRepositoryInterface
 {
+    /**
+     * @param int $orderId
+     * @return array|false
+     */
     public function apply(int $orderId)
     {
         $order = Order::with('items')->find($orderId);
 
         if (empty($order)) {
-            return $this->JsonResponse(null, 404);
+            return false;
         }
         $totalDiscount   = 0;
         $discountedTotal = $order->total;
