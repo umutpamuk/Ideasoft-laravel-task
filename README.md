@@ -28,7 +28,9 @@ Gerekli paketleri yükleyin
   composer install
 ```
 
-Sunucuyu çalıştırın
+Docker'ı başlatın.
+
+Projeyi ayağa kaldırın
 
 ```bash
   ./vendor/bin/sail up -d
